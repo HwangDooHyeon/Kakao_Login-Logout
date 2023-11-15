@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Kakao 로그인 제발요</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>회원 가입</h1>
+
+<form id="joinForm">
+    <input type="hidden" id="nickname" name="nickname">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="phoneNumber">PhoneNumber:</label>
+    <input type="text" id="phoneNumber" name="phoneNumber" required><br><br>
+
+    <input type="submit" value="Submit">
+</form>
+
+<a id="kakao-login-btn" href="https://kauth.kakao.com/oauth/authorize?client_id=2573ecdca19c0b24e9bddc7d85b04084&redirect_uri=http://localhost:8080/kakao_login&response_type=code">
+    <img src="https://developers.kakao.com/assets/img/about/logos/login/kr/kakao_account_login_btn_medium_narrow.png">
+</a>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('joinForm');
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+
+            const data = {
+                email,
+                password,
+                username,
+                phoneNumber
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/join', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("회원가입에 성공했습니다!");
+                    window.location.href = 'http://localhost:8080/login';
+                } else {
+                    alert("Error: " + result.error.message);
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
