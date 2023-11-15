@@ -22,11 +22,13 @@ public class UserController {
         return ResponseEntity.ok( ApiUtils.success(null) );
     }
 
+
     @PostMapping("/check")
     public ResponseEntity<?> check(@RequestBody @Valid UserRequest.JoinDTO requestDTO, Error error) {
         userService.checkEmail(requestDTO.getEmail());
         return ResponseEntity.ok( ApiUtils.success(null) );
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UserRequest.JoinDTO requestDTO, Error error) {
@@ -37,6 +39,7 @@ public class UserController {
                 .body(ApiUtils.success(null));
     }
 
+
     @PostMapping("/kakaoJoin")
     public ResponseEntity<?> kakaoJoin(@RequestBody UserRequest.KakaoJoinDTO kakaoUser, Error error) {
 
@@ -46,6 +49,7 @@ public class UserController {
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
 
     @PostMapping("/kakaoLogin")
     public ResponseEntity<?> kakaoLogin(@RequestBody UserRequest.KakaoLoginDTO kakaoUser, Error error) {
@@ -61,4 +65,3 @@ public class UserController {
     }
 
 }
-

@@ -14,6 +14,9 @@ public class KakaoTokenService {
     @Value("${kakao.api.key}")
     private String API_KEY;
 
+    @Value("${kakao.api.secret}")
+    private String SECRET_KEY;
+
     public boolean isAccessTokenValid(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -38,6 +41,7 @@ public class KakaoTokenService {
         }
     }
 
+
     public KakaoApiResponse refreshToken(String refreshToken) {
 
         RestTemplate restTemplate = new RestTemplate();
@@ -47,6 +51,7 @@ public class KakaoTokenService {
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("grant_type", "refresh_token");
         parameters.add("client_id", API_KEY);
+        parameters.add("client_secret", SECRET_KEY);
         parameters.add("refresh_token", refreshToken);
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, null);
@@ -61,5 +66,5 @@ public class KakaoTokenService {
             throw new HttpClientErrorException(responseEntity.getStatusCode(), "Failed to refresh token");
         }
     }
-}
 
+}

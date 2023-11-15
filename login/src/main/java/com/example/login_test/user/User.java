@@ -1,25 +1,18 @@
 package com.example.login_test.user;
 
 import lombok.*;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Getter
 @Setter
 @NoArgsConstructor
-
 @Entity
-
 @Table(name="user_tb")
 public class User{
 
-    // ** 해당 필드를 PK로 지정
     @Id
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -42,7 +35,6 @@ public class User{
     @Column(columnDefinition = "boolean default false")
     private Boolean isKakaoUser;
 
-    // * 주로 생성자의 인자가 많거나, 인자를 선택적으로 지정 해야 하는 경우에 사용.
     @Builder
     public User(int id, String email, String password, String username, String phoneNumber, List<String> roles, Boolean isKakaoUser) {
         this.id = id;

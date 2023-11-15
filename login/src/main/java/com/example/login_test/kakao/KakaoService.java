@@ -32,12 +32,17 @@ public class KakaoService {
     @Value("${kakao.api.redirectUri}")
     private String REDIRECT_URI;
 
+    @Value("${kakao.api.secret}")
+    private String SECRET_KEY;
+
+
     public String getKakaoLogin() {
         return KAKAO_AUTH_URI + "/authorize"
                 + "?client_id=" + API_KEY
                 + "&redirect_uri=" + REDIRECT_URI
                 + "&response_type=code";
     }
+
 
     // 코드를 가져 와서 카카오 토큰을 가져오는 메서드
     public String getKakaoToken(String code, HttpSession session) {
@@ -52,6 +57,7 @@ public class KakaoService {
         params.add("grant_type", "authorization_code");
         params.add("client_id", API_KEY);
         params.add("redirect_uri", REDIRECT_URI);
+        params.add("client_secret", SECRET_KEY);
         params.add("code", code);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -86,6 +92,7 @@ public class KakaoService {
             throw new HttpClientErrorException(responseEntity.getStatusCode(), "Failed to get access token");
         }
     }
+
 
     //액세스 토큰으로 카카오 API를 통해 사용자 정보를 가져옴
     public KakaoUserInforDto getKakaoInfo(String accessToken) throws JsonProcessingException {
@@ -126,6 +133,7 @@ public class KakaoService {
         }
     }
 
+
     public void join(HttpSession session) throws JsonProcessingException {
         // sessioin에 넣었던 토큰 가져와서 사용
         KakaoUserInforDto kakaoUserInfor = getKakaoInfo((String) session.getAttribute("access_token"));
@@ -142,7 +150,3 @@ public class KakaoService {
         userRepository.save(user);
     }
 }
-
-
-
-

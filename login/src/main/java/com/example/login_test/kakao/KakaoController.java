@@ -35,6 +35,7 @@ public class KakaoController {
         }
     }
 
+
     // code 제거, req 추가
     @PostMapping("/kakao/join")
     public ResponseEntity<String> join(HttpServletRequest req) {
@@ -45,6 +46,7 @@ public class KakaoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 가입 중 오류가 발생했습니다.");
         }
     }
+
 }
 
 

@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Collections;
+import java.util.List;
 
 public class UserRequest {
 
@@ -44,11 +45,15 @@ public class UserRequest {
                     .build();
         }
     }
+
+
     @Getter
     @Setter
     public static class KakaoJoinDTO {
         private String email;
         private String username;
+        private List<String> roles;
+        private Boolean isKakaoUser;
 
         public User toEntity() {
             return User.builder()
@@ -59,6 +64,7 @@ public class UserRequest {
                     .build();
         }
     }
+
 
     @Getter
     @Setter
