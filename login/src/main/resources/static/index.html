@@ -1,15 +1,16 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Join Form</title>
+    <title>Kakao 로그인 제발요</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
-<h1>Join</h1>
+<h1>회원 가입</h1>
 
 <form id="joinForm">
+    <input type="hidden" id="nickname" name="nickname">
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required><br><br>
 
@@ -24,6 +25,10 @@
 
     <input type="submit" value="Submit">
 </form>
+
+<a id="kakao-login-btn" href="https://kauth.kakao.com/oauth/authorize?client_id=c70330a63c2c9574a93ab5077435c3e4&redirect_uri=http://localhost:8080/oauth/kakao&response_type=code">
+    <img src="https://developers.kakao.com/assets/img/about/logos/login/kr/kakao_account_login_btn_medium_narrow.png">
+</a>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -56,6 +61,7 @@
 
                 if (result.success) {
                     alert("회원가입에 성공했습니다!");
+                    window.location.href = 'http://localhost:8080/login';
                 } else {
                     alert("Error: " + result.error.message);
                 }
