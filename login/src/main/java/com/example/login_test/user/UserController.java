@@ -14,14 +14,6 @@ public class UserController {
 
     private final UserService userService;
 
-    /* @Valid = 받아온 폼의 데이터 유효성을 검사하는 역할을 수행.
-     *  - @RequestBody, @ModelAttribute 와 함께 사용한다.
-     *  - DTO에서 작성된  @Size, @Pattern, @NotEmpty 등등을 검사.
-     *  - 필드에 'NOT NULL' 조건이 있거나, 'UNIQUE' 조건이 설정되어 있는 경우도 확인.
-     *
-     * @RequestBody
-     * JSON 으로 넘어오는 데이터를 UserRequest.LoginDTO 형태로 변경 해주는 역할.
-     */
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody @Valid UserRequest.JoinDTO requestDTO, Error error) {
 
@@ -44,28 +36,29 @@ public class UserController {
         return ResponseEntity.ok().header(JwtTokenProvider.HEADER, jwt)
                 .body(ApiUtils.success(null));
     }
+
+    @PostMapping("/kakaoJoin")
+    public ResponseEntity<?> kakaoJoin(@RequestBody UserRequest.KakaoJoinDTO kakaoUser, Error error) {
+
+        userService.kakaoJoin(kakaoUser);
+
+        userService.printKakaoUserInfo(kakaoUser.getEmail());
+
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @PostMapping("/kakaoLogin")
+    public ResponseEntity<?> kakaoLogin(@RequestBody UserRequest.KakaoLoginDTO kakaoUser, Error error) {
+
+        String jwt = userService.kakaoLogin(kakaoUser);
+
+        //조인은 뜨고 로그인은 안뜸 이유 찾아서 해결하기
+        // html 바로 받아오는게 맞는 지 확인
+        //userService.printKakaoUserInfo(kakaoUser.getEmail());
+
+        return ResponseEntity.ok().header(JwtTokenProvider.HEADER, jwt)
+                .body(ApiUtils.success(null));
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>제발</title>
+</head>
+<body>
+<!--파일을 templates에서 static으로 이동-->
+<form id="joinForm" th:if="${code}" action="/kakao/join" method="post">
+    <button type="submit" onclick="join()">회원 가입 하기</button>
+    <input type="hidden" name="code" th:value="${code}" />
+</form>
+<button th:if="${code}" onclick="goBack()">돌아 가기</button>
+
+<script>
+    function join() {
+    window.location.href = "http://localhost:8080/join";
+}
+</script>
+
+</body>
+</html>
+
