@@ -5,7 +5,11 @@ import com.example.login_test.core.error.exception.Exception401;
 import com.example.login_test.core.error.exception.Exception500;
 import com.example.login_test.core.security.CustomUserDetails;
 import com.example.login_test.core.security.JwtTokenProvider;
-import com.example.login_test.core.utils.SignUpMessageSender;
+import com.example.login_test.kakao.KakaoApiResponse;
+import com.example.login_test.kakao.KakaoService;
+import com.example.login_test.kakao.KakaoTokenService;
+import com.example.login_test.kakao.KakaoUserInforDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,18 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 
-/* 메서드나 클래스에 적용가능.
- * Transactional
- * 어노테이션이 적용된 메서드가 호출되면, 새로운 트랜잭션이 시작됨.
- * 메서드 실행이 성공적으로 완료되면, 트랜잭션은 자동으로 커밋.
- * 메서드 실행 중에 예외가 발생하면, 트랜잭션은 자동으로 롤백.
- *
- ** readOnly = true : 이 설정은 해당 트랜잭션이 데이터를 변경하지 않고 읽기전용으로만 사용이 가능하다는것을 명시적으로 나타냄.
- * */
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -33,6 +28,8 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final KakaoTokenService kakaoTokenService;
+    private final KakaoService kakaoService;
 
     @Transactional
     public void join(UserRequest.JoinDTO requestDTO) {
@@ -44,9 +41,6 @@ public class UserService {
 
         try {
             userRepository.save(requestDTO.toEntity());
-
-            SignUpMessageSender.sendMessage("01029055534", requestDTO.getPhoneNumber()
-                ,"환영합니다. 회원가입이 완료되었습니다.");
 
         }catch (Exception e){
             throw new Exception500(e.getMessage());
@@ -71,28 +65,49 @@ public class UserService {
 
         }catch (Exception e){
             // 401 반환.
-            throw new Exception401("인증되지 않음.");
+            throw new Exception401("인증 되지 않음.");
         }
     }
-
-    public void findAll() {
-        List<User> all = userRepository.findAll();
-        for(User user : all){
-            user.output();
-        }
-    }
-
     public void checkEmail(String email){
         // 동일한 이메일이 있는지 확인.
         Optional<User> users = userRepository.findByEmail(email);
         if(users.isPresent()) {
-            throw new Exception400("이미 존재하는 이메일 입니다. : " + email);
+            throw new Exception400("이미 존재 하는 이메일 입니다. : " + email);
         }
     }
+    @Transactional
+    public void kakaoJoin(UserRequest.KakaoJoinDTO kakaoUser) {
+        Optional<User> user = userRepository.findByEmail(kakaoUser.getEmail());
+        if (user.isPresent()) {
+            throw new Exception400("이미 존재하는 이메일입니다. : " + kakaoUser.getEmail());
+        }
+        try {
+            userRepository.save(kakaoUser.toEntity());
+        } catch (Exception e) {
+            throw new Exception500(e.getMessage());
+        }
+    }
+
+    public String kakaoLogin(UserRequest.KakaoLoginDTO kakaoUser) {
+        Optional<User> user = userRepository.findByEmail(kakaoUser.getEmail());
+        if (!user.isPresent()) {
+            throw new Exception401("해당 이메일에 대한 사용자가 존재하지 않습니다. : " + kakaoUser.getEmail());
+        }
+        return JwtTokenProvider.create(user.get());
+    }
+
+
+    @Transactional
+    public void printKakaoUserInfo(String email) {
+        //User user = userRepository.findByEmailAndIsKakaoUserTrue(email)
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception400("카카오 로그인 사용자가 존재하지 않습니다."));
+
+        System.out.println("ID: " + user.getId());
+        System.out.println("Email: " + user.getEmail());
+        System.out.println("Username: " + user.getUsername());
+        System.out.println("PhoneNumber: " + user.getPhoneNumber());
+        System.out.println("Roles: " + user.getRoles());
+    }
+
 }
-
-
-
-
-
-
