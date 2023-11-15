@@ -12,3 +12,12 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+kakao:
+  api:
+    key: "c70330a63c2c9574a93ab5077435c3e4"
+    authUri: "https://kauth.kakao.com/oauth"
+    redirectUri: "http://localhost:8080/oauth/kakao"
