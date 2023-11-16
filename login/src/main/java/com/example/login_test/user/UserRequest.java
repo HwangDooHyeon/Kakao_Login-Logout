@@ -18,7 +18,6 @@ public class UserRequest {
     @Setter
     public static class JoinDTO {
 
-        // 데이터가 비어있을 수 없는 상태.
         @NotEmpty
         @Pattern(regexp = "^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", message = "이메일 형식으로 작성해주세요")
         private String email;
@@ -78,9 +77,6 @@ public class UserRequest {
                     .build();
         }
     }
+
+
 }
-
-
-
-
-

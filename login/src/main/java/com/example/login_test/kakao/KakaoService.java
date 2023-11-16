@@ -2,6 +2,7 @@ package com.example.login_test.kakao;
 
 import com.example.login_test.user.User;
 import com.example.login_test.user.UserRepository;
+import com.example.login_test.user.UserRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -80,12 +81,17 @@ public class KakaoService {
 
             String refresh_token = kakaoApiResponse.getRefresh_token();
             String access_token = kakaoApiResponse.getAccess_token();
+            int expires_in = kakaoApiResponse.getExpires_in();
+            int refresh_token_expires_in = kakaoApiResponse.getRefresh_token_expires_in();
 
             // session에 토큰 넣어두기
             session.setAttribute("access_token", access_token);
 
-            System.out.println(refresh_token);
-            System.out.println(access_token);
+            System.out.println("getKakaoToken");
+            System.out.println("access_token: " + access_token);
+            System.out.println("expires_in: " + expires_in);
+            System.out.println("refresh_token:" + refresh_token);
+            System.out.println("refresh_token_expires_in:" + refresh_token_expires_in);
 
             return jsonObject.get("access_token").getAsString();
         } else {
@@ -121,6 +127,7 @@ public class KakaoService {
             String nickname = kakaoUserInforResponse.getProperties().getNickname();
             String email = kakaoUserInforResponse.getKakao_account().getEmail();
 
+            System.out.println("getKakaoInfo");
             System.out.println(nickname);
             System.out.println(email);
 
@@ -141,12 +148,14 @@ public class KakaoService {
         String nickname = kakaoUserInfor.getNickname();
         String email = kakaoUserInfor.getEmail();
 
-        // User 엔티티 객체 생성
-        User user = new User();
-        user.setUsername(nickname);
-        user.setEmail(email);
+        // UserDTO 객체 생성
+        UserRequest.KakaoJoinDTO kakaoJoinDTO = new UserRequest.KakaoJoinDTO();
+        kakaoJoinDTO.setUsername(nickname);
+        kakaoJoinDTO.setEmail(email);
 
         // UserRepository를 사용하여 User 저장
-        userRepository.save(user);
+        userRepository.save(kakaoJoinDTO.toEntity());
     }
+
+
 }

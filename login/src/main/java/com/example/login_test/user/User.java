@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
+//@Setter
 @NoArgsConstructor
 @Entity
 @Table(name="user_tb")
@@ -54,4 +54,6 @@ public class User{
         System.out.println(phoneNumber);
         System.out.println(roles);
     }
+
+
 }

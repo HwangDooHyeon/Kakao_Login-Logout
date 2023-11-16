@@ -45,7 +45,7 @@ public class UserController {
 
         userService.kakaoJoin(kakaoUser);
 
-        userService.printKakaoUserInfo(kakaoUser.getEmail());
+//        userService.printKakaoUserInfo(kakaoUser.getEmail());
 
         return ResponseEntity.ok(ApiUtils.success(null));
     }

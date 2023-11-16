@@ -16,5 +16,6 @@ public class KakaoUserInforDto {
             this.email = email;
             //this.profileImage = profileImage;
     }
-}
 
+
+}
