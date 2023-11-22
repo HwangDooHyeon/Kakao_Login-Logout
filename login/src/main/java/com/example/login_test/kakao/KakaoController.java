@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @RequiredArgsConstructor
 @Controller
@@ -43,6 +44,16 @@ public class KakaoController {
             return ResponseEntity.ok("회원 가입이 완료되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 가입 중 오류가 발생했습니다.");
+        }
+    }
+
+    @PostMapping("/kakao/logout")
+    public ResponseEntity<String> logout(HttpServletRequest req) {
+        try {
+            kakaoService.logout(req.getSession());
+            return ResponseEntity.ok("로그아웃되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

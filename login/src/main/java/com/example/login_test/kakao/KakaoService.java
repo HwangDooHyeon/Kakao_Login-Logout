@@ -2,6 +2,7 @@ package com.example.login_test.kakao;
 
 import com.example.login_test.user.User;
 import com.example.login_test.user.UserRepository;
+import com.example.login_test.user.UserRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -127,19 +128,45 @@ public class KakaoService {
     }
 
     public void join(HttpSession session) throws JsonProcessingException {
-        // sessioin에 넣었던 토큰 가져와서 사용
         KakaoUserInforDto kakaoUserInfor = getKakaoInfo((String) session.getAttribute("access_token"));
 
         String nickname = kakaoUserInfor.getNickname();
         String email = kakaoUserInfor.getEmail();
 
-        // User 엔티티 객체 생성
-        User user = new User();
-        user.setUsername(nickname);
-        user.setEmail(email);
+        UserRequest.KakaoJoinDTO kakaoJoinDTO = new UserRequest.KakaoJoinDTO();
+        kakaoJoinDTO.setUsername(nickname);
+        kakaoJoinDTO.setEmail(email);
 
-        // UserRepository를 사용하여 User 저장
-        userRepository.save(user);
+        userRepository.save(kakaoJoinDTO.toEntity());
+    }
+
+    public void logout(HttpSession session) {
+        String accessToken = (String) session.getAttribute("access_token");
+
+        if (accessToken != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "Bearer " + accessToken);
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> responseEntity;
+            try {
+                responseEntity = restTemplate.exchange("https://kapi.kakao.com/v1/user/logout",
+                        HttpMethod.POST,
+                        entity,
+                        String.class);
+            } catch (HttpClientErrorException e) {
+                throw new HttpClientErrorException(e.getStatusCode(), "Failed to logout");
+            }
+
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                // 로그아웃 성공 시 세션에서 access_token을 제거합니다.
+                session.removeAttribute("access_token");
+            } else {
+                throw new HttpClientErrorException(responseEntity.getStatusCode(), "Failed to logout");
+            }
+        }
     }
 }
 

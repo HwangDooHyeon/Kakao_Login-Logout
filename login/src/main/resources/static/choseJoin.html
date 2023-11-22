@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>제발</title>
+    <title>Join</title>
 </head>
 <body>
 <!--파일을 templates에서 static으로 이동-->
@@ -12,12 +12,39 @@
 </form>
 <button th:if="${code}" onclick="goBack()">돌아 가기</button>
 
+<!-- 로그아웃 버튼 -->
+<button onclick="logout()">로그아웃</button>
+
 <script>
     function join() {
-    window.location.href = "http://localhost:8080/join";
-}
+        window.location.href = "http://localhost:8080/join";
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+
+    // 로그아웃 함수
+    function logout() {
+        fetch('http://localhost:8080/kakao/logout', {
+            method: 'POST',
+        })
+        .then(response => {
+            if (response.ok) {
+                // 로그아웃 성공 처리
+                alert('로그아웃 되었습니다.');
+                // index.html로 이동
+                window.location.href = "http://localhost:8080/index.html";
+            } else {
+                // 로그아웃 실패 처리
+                alert('로그아웃 실패');
+            }
+        })
+        .catch(error => {
+            console.error('로그아웃 에러:', error);
+        });
+    }
 </script>
 
 </body>
 </html>
-
